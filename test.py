@@ -10,4 +10,13 @@
 # 进化版本-CMDB实现
 # 依然基于mysql来使用CMDB
 # 充分考虑，运维日常管理的信息复杂性，将管理信息所需要的表字段，值抽离出去形成不同的表
-# 
+#
+# from cmdb.models import drop_all, create_all
+#
+#
+#
+# drop_all()
+# create_all()
+
+
+

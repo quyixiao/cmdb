@@ -1,10 +1,6 @@
 import importlib
 import ipaddress
 
-# 使用反射实现动态加载类型方式，非常的灵活，可以扩展更多的类型，并把数据验证，转换北外乡类型自己完成
-# 这是一种插件化的编程思想具体的实现
-#
-
 classes_cache = {}  # 类缓存
 instances_cache = {}  # 实例缓存
 
