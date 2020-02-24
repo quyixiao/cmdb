@@ -1,7 +1,9 @@
 import importlib
 import json
+import logging
 
 from cmdb.types import Int, get_instance, inject_classes_cache
+from cmdb.utils import getlogger
 
 jsonstr = """
 {
@@ -21,3 +23,10 @@ inject_classes_cache() # 函数调用放在模块后面
 
 print(get_instance(obj['type'],**obj['option']).stringify(obj['value']))
 print(get_instance(obj['type'],**obj['option']).stringify(obj['value']))
+
+def a ():
+    logger = getlogger(__name__, '/Users/quyixiao/ttg/test.log')  # 路径自行更换
+    logger.info('...................xxxxxxxxxxxxxxxxxxx')
+
+
+a()

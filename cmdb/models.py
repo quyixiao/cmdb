@@ -1,8 +1,11 @@
+import json
+
 from sqlalchemy import Column, Integer, BigInteger, String, Text, Boolean
 from sqlalchemy import ForeignKey, UniqueConstraint, create_engine
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from . import config
+from .types import get_instance
 
 Base = declarative_base()
 
@@ -18,8 +21,39 @@ class Schema(Base):
 
     fields = relationship('Field')
 
+
+
+class Reference:
+    def __init__(self, ref:dict):
+        self.schema = ref['schema'] # 引用的schema
+        self.field = ref['field'] # 引用的field
+        self.on_delete = ref.get('on_delete', 'disable') # cascade,set_null,disable self.on_update = ref.get('on_update', 'disable') # cascade,disable
+
+
+
+
 class FieldMeta:
-    pass
+    def __init__(self, metastr:str):
+        meta = json.loads(metastr)
+        if isinstance(meta, str):
+            self.instance = get_instance(meta['type'])
+        else:
+            option = meta['type'].get('option')
+            if option:
+                self.instance = get_instance(meta['type']['name'], **option)
+            else:
+                self.instance = get_instance(meta['type']['name'])
+        self.unique = meta.get('unique', False)
+        self.nullable = meta.get('nullable', True)
+        self.default = meta.get('default')
+        self.multi = meta.get('multi', False) # 引用是一个json对象
+        ref = meta.get('reference')
+        if ref:
+            self.reference = Reference(ref)
+        else:
+            self.reference = None
+
+
 
 
 class Field(Base):
@@ -35,6 +69,10 @@ class Field(Base):
 
     schema = relationship('Schema')
     ref = relationship('Field', uselist=False)  # 1对1，被引用的id
+
+    @property  # 增加一个属性将meta解析成对象，注意不要使用metadata这个名字
+    def meta_data(self):
+        return FieldMeta(self.meta)
 
 
 # 逻辑表的记录表
